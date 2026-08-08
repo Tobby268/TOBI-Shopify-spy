@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shopify Spy — Store Watchlist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">◎</span>
+        <span class="brand-name">shopify<span class="brand-accent">spy</span></span>
+      </div>
+
+      <form id="add-store-form" class="add-store">
+        <label for="domain-input" class="field-label">Track a store</label>
+        <input id="domain-input" type="text" placeholder="example-store.myshopify.com" autocomplete="off" />
+        <button type="submit">＋ Add to watchlist</button>
+      </form>
+
+      <div class="watchlist-header">
+        <span>Watchlist</span>
+        <span id="store-count" class="count-pill">0</span>
+      </div>
+      <ul id="store-list" class="store-list"></ul>
+    </aside>
+
+    <main class="main">
+      <div id="empty-state" class="empty-state">
+        <div class="empty-glyph">◎</div>
+        <h2>No store selected</h2>
+        <p>Add a Shopify store's domain on the left, then select it to run a scan.</p>
+      </div>
+
+      <div id="store-detail" class="store-detail" hidden>
+        <header class="detail-header">
+          <div>
+            <h1 id="detail-domain">—</h1>
+            <div class="detail-meta">
+              <span id="detail-status" class="status-pill status-unscanned">unscanned</span>
+              <span id="detail-last-scan" class="muted"></span>
+            </div>
+          </div>
+          <button id="scan-btn" class="scan-btn">
+            <span class="scan-btn-label">Scan now</span>
+          </button>
+        </header>
+
+        <div id="scan-progress" class="scan-progress" hidden>
+          <div class="scan-progress-bar"></div>
+          <span>Reading robots.txt, homepage and product catalog…</span>
+        </div>
+
+        <section class="detail-grid">
+          <div class="panel">
+            <h3>Theme</h3>
+            <div id="theme-info" class="mono-block">—</div>
+          </div>
+          <div class="panel">
+            <h3>Detected apps</h3>
+            <div id="apps-info" class="chip-row">—</div>
+          </div>
+          <div class="panel">
+            <h3>Catalog</h3>
+            <div id="catalog-summary" class="mono-block">—</div>
+          </div>
+        </section>
+
+        <section class="panel diff-panel" id="diff-panel" hidden>
+          <h3>Since last scan</h3>
+          <div id="diff-content"></div>
+        </section>
+
+        <section class="panel">
+          <h3>Products</h3>
+          <table class="product-table">
+            <thead>
+              <tr><th>Title</th><th>Type</th><th>Price</th><th>Available</th></tr>
+            </thead>
+            <tbody id="product-table-body"></tbody>
+          </table>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
