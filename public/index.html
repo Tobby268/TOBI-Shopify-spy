@@ -16,27 +16,44 @@
         <span class="brand-name">shopify<span class="brand-accent">spy</span></span>
       </div>
 
-      <form id="add-store-form" class="add-store">
-        <label for="domain-input" class="field-label">Track a store</label>
-        <input id="domain-input" type="text" placeholder="example-store.myshopify.com" autocomplete="off" />
-        <button type="submit">＋ Add to watchlist</button>
-      </form>
+      <button id="open-add-store" class="add-store-trigger">＋ Track a new store</button>
 
-      <div class="watchlist-header">
-        <span>Watchlist</span>
-        <span id="store-count" class="count-pill">0</span>
+      <div class="sidebar-stats">
+        <div class="stat"><span id="stat-stores" class="stat-num">0</span><span class="stat-label">stores tracked</span></div>
+        <div class="stat"><span id="stat-products" class="stat-num">0</span><span class="stat-label">products indexed</span></div>
       </div>
-      <ul id="store-list" class="store-list"></ul>
+
+      <div class="sidebar-note">Every store you scan gets added to your directory below — search and filter it like a mini ppspy.</div>
     </aside>
 
     <main class="main">
-      <div id="empty-state" class="empty-state">
-        <div class="empty-glyph">◎</div>
-        <h2>No store selected</h2>
-        <p>Add a Shopify store's domain on the left, then select it to run a scan.</p>
+      <div id="directory-view">
+        <header class="directory-header">
+          <h1>Store Directory</h1>
+          <div class="directory-controls">
+            <input id="search-input" type="text" placeholder="Search domain or product keyword…" />
+            <select id="theme-filter"><option value="">All themes</option></select>
+            <select id="app-filter"><option value="">All apps</option></select>
+            <select id="sort-select">
+              <option value="recent">Sort: recently scanned</option>
+              <option value="products-desc">Sort: most products</option>
+              <option value="products-asc">Sort: fewest products</option>
+              <option value="domain">Sort: domain A–Z</option>
+            </select>
+          </div>
+        </header>
+
+        <div id="directory-empty" class="empty-state" hidden>
+          <div class="empty-glyph">◎</div>
+          <h2>No stores tracked yet</h2>
+          <p>Click "＋ Track a new store" on the left to scan your first one.</p>
+        </div>
+
+        <div id="directory-grid" class="directory-grid"></div>
       </div>
 
       <div id="store-detail" class="store-detail" hidden>
+        <button id="back-to-directory" class="back-link">← Back to directory</button>
         <header class="detail-header">
           <div>
             <h1 id="detail-domain">—</h1>
@@ -86,6 +103,18 @@
         </section>
       </div>
     </main>
+  </div>
+
+  <div id="add-store-modal" class="modal-overlay" hidden>
+    <form id="add-store-form" class="modal-card">
+      <h2>Track a new store</h2>
+      <label for="domain-input" class="field-label">Shopify domain</label>
+      <input id="domain-input" type="text" placeholder="example-store.myshopify.com" autocomplete="off" autofocus />
+      <div class="modal-actions">
+        <button type="button" id="cancel-add-store" class="modal-cancel">Cancel</button>
+        <button type="submit" class="modal-submit">Add &amp; scan</button>
+      </div>
+    </form>
   </div>
 
   <script src="app.js"></script>
