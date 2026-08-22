@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shopify Spy — Store Watchlist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">◎</span>
+        <span class="brand-name">shopify<span class="brand-accent">spy</span></span>
+      </div>
+
+      <button id="open-add-store" class="add-store-trigger">＋ Track a new store</button>
+
+      <div class="sidebar-stats">
+        <div class="stat"><span id="stat-stores" class="stat-num">0</span><span class="stat-label">stores tracked</span></div>
+        <div class="stat"><span id="stat-products" class="stat-num">0</span><span class="stat-label">products indexed</span></div>
+      </div>
+
+      <div class="sidebar-note">Every store you scan gets added to your directory below — search and filter it like a mini ppspy.</div>
+    </aside>
+
+    <main class="main">
+      <div id="directory-view">
+        <header class="directory-header">
+          <h1>Store Directory</h1>
+          <div class="directory-controls">
+            <input id="search-input" type="text" placeholder="Search domain or product keyword…" />
+            <select id="theme-filter"><option value="">All themes</option></select>
+            <select id="app-filter"><option value="">All apps</option></select>
+            <select id="sort-select">
+              <option value="recent">Sort: recently scanned</option>
+              <option value="products-desc">Sort: most products</option>
+              <option value="products-asc">Sort: fewest products</option>
+              <option value="domain">Sort: domain A–Z</option>
+            </select>
+          </div>
+        </header>
+
+        <div id="directory-empty" class="empty-state" hidden>
+          <div class="empty-glyph">◎</div>
+          <h2>No stores tracked yet</h2>
+          <p>Click "＋ Track a new store" on the left to scan your first one.</p>
+        </div>
+
+        <div id="directory-grid" class="directory-grid"></div>
+      </div>
+
+      <div id="store-detail" class="store-detail" hidden>
+        <button id="back-to-directory" class="back-link">← Back to directory</button>
+        <header class="detail-header">
+          <div>
+            <h1 id="detail-domain">—</h1>
+            <div class="detail-meta">
+              <span id="detail-status" class="status-pill status-unscanned">unscanned</span>
+              <span id="detail-last-scan" class="muted"></span>
+            </div>
+          </div>
+          <button id="scan-btn" class="scan-btn">
+            <span class="scan-btn-label">Scan now</span>
+          </button>
+        </header>
+
+        <div id="scan-progress" class="scan-progress" hidden>
+          <div class="scan-progress-bar"></div>
+          <span>Reading robots.txt, homepage and product catalog…</span>
+        </div>
+
+        <section class="detail-grid">
+          <div class="panel">
+            <h3>Theme</h3>
+            <div id="theme-info" class="mono-block">—</div>
+          </div>
+          <div class="panel">
+            <h3>Detected apps</h3>
+            <div id="apps-info" class="chip-row">—</div>
+          </div>
+          <div class="panel">
+            <h3>Catalog</h3>
+            <div id="catalog-summary" class="mono-block">—</div>
+          </div>
+        </section>
+
+        <section class="panel diff-panel" id="diff-panel" hidden>
+          <h3>Since last scan</h3>
+          <div id="diff-content"></div>
+        </section>
+
+        <section class="panel">
+          <h3>Products</h3>
+          <table class="product-table">
+            <thead>
+              <tr><th>Title</th><th>Type</th><th>Price</th><th>Available</th></tr>
+            </thead>
+            <tbody id="product-table-body"></tbody>
+          </table>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="add-store-modal" class="modal-overlay" hidden>
+    <form id="add-store-form" class="modal-card">
+      <h2>Track a new store</h2>
+      <label for="domain-input" class="field-label">Shopify domain</label>
+      <input id="domain-input" type="text" placeholder="example-store.myshopify.com" autocomplete="off" autofocus />
+      <div class="modal-actions">
+        <button type="button" id="cancel-add-store" class="modal-cancel">Cancel</button>
+        <button type="submit" class="modal-submit">Add &amp; scan</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
