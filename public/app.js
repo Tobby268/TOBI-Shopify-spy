@@ -60,6 +60,7 @@ function getFilteredSortedStores() {
     if (sortBy === 'products-desc') return (b.latest?.productCount || 0) - (a.latest?.productCount || 0);
     if (sortBy === 'products-asc') return (a.latest?.productCount || 0) - (b.latest?.productCount || 0);
     if (sortBy === 'domain') return a.domain.localeCompare(b.domain);
+    // recent
     return new Date(b.lastScanAt || 0) - new Date(a.lastScanAt || 0);
   });
 
@@ -143,3 +144,101 @@ function renderDetail() {
   const body = el('product-table-body');
   body.innerHTML = (snap.products || []).slice(0, 100).map((p) => `
     <tr>
+      <td>${p.title || ''}</td>
+      <td>${p.productType || ''}</td>
+      <td>${p.price ? '$' + p.price : '—'}</td>
+      <td>${p.available === null ? '—' : (p.available ? 'yes' : 'no')}</td>
+    </tr>
+  `).join('');
+}
+
+function renderDiff(diff) {
+  const panel = el('diff-panel');
+  const content = el('diff-content');
+  if (diff.isFirstScan) {
+    panel.hidden = true;
+    return;
+  }
+  if (!diff.newProducts.length && !diff.priceChanges.length && !diff.removedProducts.length) {
+    panel.hidden = false;
+    content.innerHTML = '<div class="muted mono-block">No changes since last scan.</div>';
+    return;
+  }
+  panel.hidden = false;
+  const rows = [
+    ...diff.newProducts.map((p) => `<div class="diff-row diff-new">+ new: ${p.title}</div>`),
+    ...diff.priceChanges.map((p) => `<div class="diff-row diff-price">~ price: ${p.title} — $${p.from} → $${p.to}</div>`),
+    ...diff.removedProducts.map((p) => `<div class="diff-row diff-removed">− removed: ${p.title}</div>`),
+  ];
+  content.innerHTML = rows.join('');
+}
+
+// ---- Modal ----
+el('open-add-store').addEventListener('click', () => {
+  el('add-store-modal').hidden = false;
+  el('domain-input').focus();
+});
+el('cancel-add-store').addEventListener('click', () => {
+  el('add-store-modal').hidden = true;
+});
+el('add-store-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'add-store-modal') el('add-store-modal').hidden = true;
+});
+
+el('add-store-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = el('domain-input');
+  const domain = input.value.trim();
+  if (!domain) return;
+  const res = await fetch('/api/stores', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ domain }),
+  });
+  if (res.ok) {
+    const store = await res.json();
+    input.value = '';
+    el('add-store-modal').hidden = true;
+    await loadStores();
+    activeStoreId = store.id;
+    showDetail();
+    // auto-trigger first scan
+    el('scan-btn').click();
+  } else {
+    const err = await res.json();
+    alert(err.error || 'Could not add store');
+  }
+});
+
+// ---- Detail view actions ----
+el('back-to-directory').addEventListener('click', showDirectory);
+
+el('scan-btn').addEventListener('click', async () => {
+  if (!activeStoreId) return;
+  const btn = el('scan-btn');
+  btn.disabled = true;
+  el('scan-progress').hidden = false;
+
+  try {
+    const res = await fetch(`/api/stores/${activeStoreId}/scan`, { method: 'POST' });
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.error || 'Scan failed');
+    } else {
+      await loadStores();
+      renderDetail();
+      renderDiff(data.diff);
+    }
+  } finally {
+    btn.disabled = false;
+    el('scan-progress').hidden = true;
+  }
+});
+
+// ---- Directory controls ----
+el('search-input').addEventListener('input', renderDirectory);
+el('theme-filter').addEventListener('change', renderDirectory);
+el('app-filter').addEventListener('change', renderDirectory);
+el('sort-select').addEventListener('change', renderDirectory);
+
+loadStores();
